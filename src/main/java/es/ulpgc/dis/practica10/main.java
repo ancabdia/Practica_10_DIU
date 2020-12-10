@@ -5,20 +5,12 @@
  */
 package es.ulpgc.dis.practica10;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -38,72 +30,8 @@ public class main extends javax.swing.JFrame {
     HashMap<String, String> map = new HashMap<>();
     int[] index;
     int j, x = 0;
-    private Tarea tarea = null;
 
-//<Clase de datos a devolver, entero para barra de progreso >
-    private class Tarea extends SwingWorker<Void, Void> {
 
-        ZipOutputStream out;
-        private boolean flag = false;
-
-        @Override
-        protected Void doInBackground() throws Exception {
-
-            try {
-                int progressValue = 0;
-
-// Objeto para referenciar a los archivos que queremos comprimir
-                BufferedInputStream origin = null;
-// Objeto para referenciar el archivo zip de salida                
-                FileOutputStream dest = new FileOutputStream(selectFile);
-                out = new ZipOutputStream(new BufferedOutputStream(dest));
-
-// Buffer de transferencia para almacenar datos a comprimir
-                byte[] data = new byte[1024];
-
-                Iterator i = files.iterator();
-                while (i.hasNext() && !flag) {
-                    
-                    //tarea.execute();
-                    String filename = (String) i.next();
-                    System.out.println("fichero: " + filename.substring(filename.lastIndexOf('/') + 1));
-                    FileInputStream fi = new FileInputStream(filename);
-                    origin = new BufferedInputStream(fi, 1024);
-                    ZipEntry entry = new ZipEntry(filename.substring(filename.lastIndexOf('/') + 1));
-
-                    out.putNextEntry(entry);
-// Leemos datos desde el archivo origen y se envían al archivo destino
-                    int count;
-
-                    while ((count = origin.read(data, 0, 1024)) != -1) {
-                        out.write(data, 0, count);
-                    }
-
-// Cerramos el archivo origen, ya enviado a comprimir
-                    origin.close();
-                    progressValue++;
-                    jProgressBar1.setValue((progressValue * 100) / files.size());
-                    //Thread.sleep(100);
-
-                }
-// Cerramos el archivo zip
-                System.out.println("Compresion terminada");
-                out.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        public void done() {
-            aceptButton.setEnabled(true);
-            flag = true;
-            System.out.println("Tarea terminada");
-        }
-
-    }
 
     /**
      * Creates new form main
@@ -123,11 +51,6 @@ public class main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        workDialog = new javax.swing.JDialog();
-        jProgressBar1 = new javax.swing.JProgressBar();
-        information = new javax.swing.JLabel();
-        aceptButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         list = new javax.swing.JList<>();
         fileInfo = new javax.swing.JLabel();
@@ -140,62 +63,6 @@ public class main extends javax.swing.JFrame {
         compressMenu = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         informationOption = new javax.swing.JMenuItem();
-
-        workDialog.setTitle("Compressing");
-
-        information.setText("Creating zip file: ");
-
-        aceptButton.setText("Acept");
-        aceptButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aceptButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        workDialog.setSize(new java.awt.Dimension(300, 150));
-
-        javax.swing.GroupLayout workDialogLayout = new javax.swing.GroupLayout(workDialog.getContentPane());
-        workDialog.getContentPane().setLayout(workDialogLayout);
-        workDialogLayout.setHorizontalGroup(
-            workDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(workDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(workDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(workDialogLayout.createSequentialGroup()
-                        .addComponent(information)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(workDialogLayout.createSequentialGroup()
-                        .addGroup(workDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, workDialogLayout.createSequentialGroup()
-                                .addComponent(aceptButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cancelButton))
-                            .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
-        workDialogLayout.setVerticalGroup(
-            workDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(workDialogLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(information)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(workDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cancelButton)
-                    .addGroup(workDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(aceptButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jProgressBar1.setStringPainted(true);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -314,7 +181,7 @@ public class main extends javax.swing.JFrame {
                             String name = list.getModel().getElementAt(index[j]);
                             for (HashMap.Entry<String, String> entry : map.entrySet()) {
                                 if (name.equals(entry.getKey())) {
-                                    System.out.println(entry.getValue());
+                                    
                                     files.add(entry.getValue());
                                 }
                             }
@@ -329,7 +196,11 @@ public class main extends javax.swing.JFrame {
 
     private void compressMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compressMenuActionPerformed
         // TODO add your handling code here:
-        tarea = new Tarea();
+        
+        
+        
+        
+        
         JFileChooser fc = new JFileChooser();
 
         fc.setDialogTitle("Compress");
@@ -338,24 +209,16 @@ public class main extends javax.swing.JFrame {
         int res = fc.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {
             selectFile = fc.getSelectedFile().getAbsoluteFile() + ".zip";
-            workDialog.setVisible(true);
-            workDialog.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            tarea.execute();
-            aceptButton.setEnabled(false);
-            cancelButton.setEnabled(true);
+            
+            progress tarea2 = new progress(this, false, files, selectFile);
+            tarea2.start();
+        tarea2.setVisible(true);
+        
+            
+            
+            tarea2.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         }
     }//GEN-LAST:event_compressMenuActionPerformed
-
-    private void aceptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptButtonActionPerformed
-        // TODO add your handling code here:
-        workDialog.setVisible(false);
-    }//GEN-LAST:event_aceptButtonActionPerformed
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
-        tarea.cancel(true);
-        information.setText("Tarea cancelada por el Usuario");
-    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
         // TODO add your handling code here:
@@ -418,22 +281,17 @@ public class main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton aceptButton;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JMenuItem compressMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenu;
     private javax.swing.JLabel fileInfo;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JLabel information;
     private javax.swing.JMenuItem informationOption;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JList<String> list;
     private javax.swing.JMenuItem openMenu;
-    private javax.swing.JDialog workDialog;
     // End of variables declaration//GEN-END:variables
 }
